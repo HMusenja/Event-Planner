@@ -1,0 +1,12 @@
+/* styles.css (or custom CSS file) */
+
+/* Dark background for forms */
+.bg-dark-form {
+    background-color: #1a202c; /* Darker gray for forms */
+  }
+  
+  /* Optional hover effects for buttons */
+  button:hover {
+    background-color: #2b6cb0; /* Hover effect for buttons */
+  }
+  

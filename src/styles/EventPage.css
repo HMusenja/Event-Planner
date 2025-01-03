@@ -1,0 +1,106 @@
+
+
+
+/* General Backgrounds */
+.bg-primary {
+  background-color: #2c3e50; /* Dark background color for the main container */
+}
+
+.bg-secondary {
+  background-color: #34495e; /* Lighter dark background for cards and sections */
+}
+
+.text-white {
+  color: white; /* Set text to white */
+}
+
+.text-accent {
+  color: #1abc9c; /* Accent color for headings, buttons, etc. */
+}
+
+.text-light {
+  color: rgba(255, 255, 255, 0.7); /* Softer, lighter white for details text */
+}
+
+/* Hover Effects */
+.bg-accent:hover {
+  background-color: #16a085; /* Hover effect on accent button */
+}
+
+.bg-opacity-80 {
+  opacity: 0.8;
+}
+
+.text-white:hover {
+  color: #ecf0f1; /* Slightly different shade of white for hover */
+}
+
+/* Buttons */
+button {
+  background-color: #16a085;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button:hover {
+  background-color: #1abc9c;
+  transform: scale(1.05);
+}
+
+button:focus {
+  outline: none;
+  background-color: #1abc9c;
+}
+
+/* Images and Cards */
+.card {
+  background-color: #34495e;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card img {
+  border-radius: 5px;
+}
+
+.card-title {
+  color: #1abc9c;
+  font-weight: bold;
+
+/* Loading Spinner */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #1abc9c;
+  border-radius: 50%;
+  animation: spin 1s infinite linear;
+}
+
+/* Show More Button */
+.show-more-button {
+  background-color: #1abc9c;
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.show-more-button:hover {
+  background-color: #16a085;
+}
+
+/* Animations */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+}

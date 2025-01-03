@@ -1,0 +1,151 @@
+/* ManageEvents.css */
+
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  .events-list{
+   border: 1px solid blue;
+   display: flex;
+   flex-wrap: wrap;
+   padding: 20px;
+   gap: 5px;
+   width: 100%;
+  }
+  /* Container for the page */
+  .container {
+   
+
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    margin-top: 50px;
+   
+   
+  }
+  
+  /* Page Heading */
+  h1 {
+    font-size: 2rem;
+
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #fcf9f9;
+  }
+  
+  /* Error Message */
+  .error {
+    color: red;
+    margin-bottom: 20px;
+  }
+  .event-details{
+    background-color: #d2e0d6;
+   
+  text-align: center;
+  }
+  /* Event Card */
+  .event-card {
+    border: 1px solid #ddd;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    margin-top: 50px;
+    width: 30%;
+  }
+  
+  .event-card h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .event-card p {
+    margin-bottom: 8px;
+  }
+  
+  .event-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-top: 16px;
+  }
+  
+  .event-card .buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  
+  .event-card button {
+    font-size:0.7rem;
+    padding: 8px 8px;
+    border-radius: 5px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .event-card button:hover {
+    opacity: 0.8;
+  }
+  
+  .event-card .view-details {
+    background-color: #007bff;
+  }
+  
+  .event-card .edit-event {
+    background-color: #28a745;
+  }
+  
+  .event-card .manage-reservations {
+    background-color: #ffc107;
+  }
+  
+  .event-card .delete-event {
+    background-color: #dc3545;
+  }
+  
+  /* Loading message */
+  .loading {
+    font-size: 1.25rem;
+    margin-top: 20px;
+  }
+  
+  /* No events available message */
+  .no-events {
+    font-size: 1.25rem;
+    margin-top: 20px;
+  }
+  .buttons{
+    display: flex;
+    flex-wrap: wrap;
+  }
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .container {
+      padding: 15px;
+    }
+  
+    h1 {
+      font-size: 1.75rem;
+    }
+  
+    .event-card {
+      padding: 12px;
+      width: 100%;
+    }
+  
+    .event-card .buttons {
+      flex-direction: column;
+      gap: 12px;
+    }
+    .events-list{
+    flex-direction: column;
+     }
+  }
+  

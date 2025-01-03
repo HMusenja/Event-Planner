@@ -1,0 +1,61 @@
+/* HomePage Container */
+.home-page {
+  height: 100vh; /* Full screen height */
+  background-image: url('https://images.unsplash.com/photo-1574154894072-18ba0d48321b?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+  background-size: cover; /* Ensures the image covers the whole viewport */
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* Allows for layering */
+}
+
+/* Hero Section Styling */
+.hero-section {
+  background-color: rgba(0, 0, 0, 0.7); /* Dark overlay for text readability */
+  padding: 3rem; /* Space inside the container */
+  border-radius: 1rem; /* Smooth corners */
+  max-width: 90%; /* Restricts width on smaller screens */
+  text-align: center; /* Centers text */
+  color: #e2e8f0; /* Tailwind light text color */
+}
+
+/* Heading Styles */
+.hero-section h1 {
+  font-size: 3rem; /* Scalable heading */
+  font-weight: 800; /* Bold emphasis */
+  margin-bottom: 1.5rem; /* Space below the heading */
+  color: #14b8a6; /* Tailwind accent color */
+}
+
+/* Paragraph Styles */
+.hero-section p {
+  font-size: 1.25rem; /* Slightly larger text for readability */
+  margin-bottom: 2rem; /* Space below the paragraph */
+}
+
+/* CTA Button */
+.cta-button {
+  display: inline-block;
+  padding: 0.75rem 2rem; /* Padding around the text */
+  background-color: #14b8a6; /* Tailwind accent color */
+  color: white;
+  font-size: 1.25rem; /* Medium-sized text */
+  font-weight: bold;
+  border-radius: 9999px; /* Fully rounded corners */
+  transition: background-color 0.3s ease; /* Smooth hover transition */
+}
+
+.cta-button:hover {
+  background-color: #0d9488; /* Darker teal on hover */
+}
+
+/* Responsive Media Queries */
+@media (min-width: 768px) {
+  .hero-section h1 {
+    font-size: 4rem; /* Larger heading for bigger screens */
+  }
+  .hero-section p {
+    font-size: 1.5rem; /* Slightly larger text for readability */
+  }
+}

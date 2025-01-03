@@ -1,0 +1,178 @@
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f7f7f7;
+  color: #333;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Hero Section */
+.hero {
+  background-color: #34495e;
+  color: white;
+  padding: 60px 20px;
+  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Progress Bar */
+.progress-bar-container {
+  background-color: #ecf0f1;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  background-color: #27ae60;
+  height: 20px;
+  border-radius: 5px;
+  width: 0;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  text-align: right;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+/* Attendee List */
+.attendee-list-container {
+  background-color: rgb(252, 249, 249);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.attendee-list-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.attendee-list-container li {
+  padding: 15px;
+  border-bottom: 1px solid #636566;
+  font-size: 0.9rem;
+  color: #34495e;
+}
+
+.attendee-list-container li:last-child {
+  border-bottom: none;
+}
+
+.attendee-list-container li:hover {
+  background-color: #f1f1f1;
+}
+
+/* Add Attendee Form */
+.add-attendee-form {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  margin-top: 20px;
+}
+
+.add-attendee-form input,
+.add-attendee-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.add-attendee-form input:focus,
+.add-attendee-form textarea:focus {
+  outline: none;
+  border-color: #27ae60;
+}
+
+/* Buttons */
+button {
+  padding: 10px 20px;
+  border-radius: 5px;
+  background-color: #27ae60;
+  color: white;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2ecc71;
+}
+
+button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+/* Action Buttons */
+.attendees-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero h1 {
+      font-size: 2.5rem;
+  }
+
+  .container {
+      padding: 15px;
+  }
+
+  .attendee-list-container li {
+      font-size: 1rem;
+  }
+
+  .add-attendee-form {
+      width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+      padding: 40px 20px;
+  }
+
+  .hero h1 {
+      font-size: 2rem;
+  }
+
+  button {
+      width: 100%;
+      padding: 12px;
+  }
+}
