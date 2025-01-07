@@ -5,7 +5,7 @@ import { ghPages } from 'vite-plugin-gh-pages';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), ghPages()],
-  base: '/Event-Search-Planner/',
+  base: '/Event-Search-Planner/HomePage/',
   css: {
     postcss: './postcss.config.js', // Ensures PostCSS config is loaded
   },
