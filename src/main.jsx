@@ -8,7 +8,7 @@ import { AuthProvider } from './context/AuthContext';
 import { BrowserRouter as Router } from 'react-router-dom'; // Import BrowserRouter
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <Router> {/* Wrap App in Router */}
+  <Router basename="/Event-Planner">
     <AuthProvider>
       <App />
     </AuthProvider>
