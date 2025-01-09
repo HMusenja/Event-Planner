@@ -1,25 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  query,
+  where,
+} from "firebase/firestore";
+import { useAuth } from "../context/AuthContext"; // Import AuthContext to access current user
 import GoBackButton from "../components/GoBackButton";
 import { db } from "../firebase";
+import { getAuth } from "firebase/auth";
 
 function ManageEvents() {
   const [events, setEvents] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth(); // Get the authenticated user
   const navigate = useNavigate();
 
-  // Fetch events from Firestore
+  // Fetch events for the logged-in user
   const fetchEvents = async () => {
     setLoading(true);
     setError(""); // Clear any previous errors
     try {
-      const eventCollection = collection(db, "events");
-      const eventSnapshot = await getDocs(eventCollection);
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user || !user.uid) {
+        throw new Error("User is not logged in.");
+      }
+
+      // Fetch events specific to the logged-in user
+      const userEventsCollection = collection(db, `users/${user.uid}/events`);
+      const eventSnapshot = await getDocs(userEventsCollection);
       const eventList = eventSnapshot.docs.map((doc) => {
         const data = doc.data();
-        const ticketsRemaining = (data.ticketQuantity || 0) - (data.ticketsSold || 0);
+        const ticketsRemaining =
+          (data.ticketQuantity || 0) - (data.ticketsSold || 0);
         return {
           id: doc.id,
           ...data,
@@ -35,7 +54,7 @@ function ManageEvents() {
     }
   };
 
-  // Handle event deletion with Firestore
+  // Handle event deletion for the current user
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this event?"
@@ -43,7 +62,9 @@ function ManageEvents() {
     if (confirmDelete) {
       try {
         await deleteDoc(doc(db, "events", id)); // Delete event from Firestore
-        setEvents((prevEvents) => prevEvents.filter((event) => event.id !== id));
+        setEvents((prevEvents) =>
+          prevEvents.filter((event) => event.id !== id)
+        );
       } catch (err) {
         console.error("Error deleting event:", err);
         setError("Failed to delete the event. Please try again later.");
@@ -53,7 +74,7 @@ function ManageEvents() {
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [user]); // Refetch events when the user changes or logs in
 
   return (
     <div className="container mx-auto mt-10 px-4 py-6 bg-gradient-to-br from-indigo-600 via-purple-700 to-pink-600 min-h-screen text-white">
@@ -106,7 +127,8 @@ function ManageEvents() {
               <div>
                 <h2 className="text-xl font-bold mb-2">{event.eventName}</h2>
                 <p className="text-sm mb-1">
-                  <span className="font-semibold">Location:</span> {event.location}
+                  <span className="font-semibold">Location:</span>{" "}
+                  {event.location}
                 </p>
                 <p className="text-sm mb-1">
                   <span className="font-semibold">Date:</span> {event.date}
@@ -129,7 +151,9 @@ function ManageEvents() {
                 {/* View Details */}
                 <button
                   onClick={() =>
-                    navigate(`/events/view-details`, { state: { event } })
+                    navigate("/events/view-details/:eventId", {
+                      state: { eventId: event.id },
+                    })
                   }
                   className="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
                 >
@@ -179,6 +203,3 @@ function ManageEvents() {
 }
 
 export default ManageEvents;
-
-
-

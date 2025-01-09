@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, addDoc, deleteDoc, updateDoc, doc } from "firebase/firestore";
-import { db } from "../firebase"; // Ensure you have the Firebase instance set up
+import { db } from "../firebase"; // Ensure your Firebase instance is set up
+import { useAuth } from "../context/AuthContext"; // Assuming you have an AuthContext to get the logged-in user
 import EventCreationForm from "../components/EventCreationForm";
 
 function MyEventsPage() {
+  const { user } = useAuth(); // Fetch the currently logged-in user
   const [myCreatedEvents, setMyCreatedEvents] = useState([]);
   const [editingEvent, setEditingEvent] = useState(null);
   const [editFormData, setEditFormData] = useState({});
@@ -11,15 +13,28 @@ function MyEventsPage() {
   const [showCreateEventForm, setShowCreateEventForm] = useState(false);
   const [error, setError] = useState("");
 
-  // Fetch events from Firestore
+  // Fetch events from the user's subcollection
   const fetchEvents = async () => {
+    if (!user?.uid) {
+      console.error("No user logged in");
+      return;
+    }
+
+    console.log("Fetching events for user:", user.uid);
+
     try {
-      const eventCollection = collection(db, "events");
-      const eventSnapshot = await getDocs(eventCollection);
-      const eventList = eventSnapshot.docs.map((doc) => ({
+      // Access the user's events subcollection
+      const eventsCollection = collection(db, "users", user.uid, "events");
+      const querySnapshot = await getDocs(eventsCollection);
+
+      console.log("All fetched documents:", querySnapshot.docs.map((doc) => doc.data()));
+
+      const eventList = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
+
+      console.log("Filtered events for user:", eventList);
       setMyCreatedEvents(eventList);
     } catch (err) {
       console.error("Error fetching events:", err);
@@ -27,11 +42,16 @@ function MyEventsPage() {
     }
   };
 
-  // Add a new event to Firestore
+  // Add a new event to the user's events subcollection
   const handleCreateEvent = async (newEvent) => {
+    if (!user?.uid) {
+      console.error("No user logged in");
+      return;
+    }
+
     try {
-      const eventCollection = collection(db, "events");
-      const docRef = await addDoc(eventCollection, newEvent);
+      const eventsCollection = collection(db, "users", user.uid, "events");
+      const docRef = await addDoc(eventsCollection, newEvent);
       setMyCreatedEvents((prev) => [...prev, { id: docRef.id, ...newEvent }]);
     } catch (err) {
       console.error("Error creating event:", err);
@@ -39,10 +59,15 @@ function MyEventsPage() {
     }
   };
 
-  // Delete an event from Firestore
+  // Delete an event from the user's events subcollection
   const handleDeleteEvent = async (eventId) => {
+    if (!user?.uid) {
+      console.error("No user logged in");
+      return;
+    }
+
     try {
-      await deleteDoc(doc(db, "events", eventId));
+      await deleteDoc(doc(db, "users", user.uid, "events", eventId));
       setMyCreatedEvents((prev) => prev.filter((event) => event.id !== eventId));
     } catch (err) {
       console.error("Error deleting event:", err);
@@ -50,7 +75,7 @@ function MyEventsPage() {
     }
   };
 
-  // Edit an event in Firestore
+  // Edit an event in the user's events subcollection
   const handleEditEvent = (event) => {
     setEditingEvent(event);
     setEditFormData(event);
@@ -58,10 +83,15 @@ function MyEventsPage() {
   };
 
   const handleSaveEdit = async () => {
+    if (!user?.uid) {
+      console.error("No user logged in");
+      return;
+    }
+
     try {
-      await updateDoc(doc(db, "events", editingEvent.id), editFormData);
+      await updateDoc(doc(db, "users", user.uid, "events", editingEvent.id), editFormData);
       setMyCreatedEvents((prev) =>
-        prev.map((event) => (event.id === editingEvent.id ? { ...editFormData } : event))
+        prev.map((event) => (event.id === editingEvent.id ? { id: editingEvent.id, ...editFormData } : event))
       );
       setIsEditModalOpen(false);
       setEditingEvent(null);
@@ -78,7 +108,7 @@ function MyEventsPage() {
 
   useEffect(() => {
     fetchEvents();
-  }, []);
+  }, [user]);
 
   return (
     <div className="container mx-auto mt-10 px-4 py-6 bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 min-h-screen text-white relative overflow-hidden">
@@ -188,4 +218,5 @@ function MyEventsPage() {
 }
 
 export default MyEventsPage;
+
 

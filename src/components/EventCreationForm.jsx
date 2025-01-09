@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Importing useNavigate
-import { collection, addDoc } from "firebase/firestore"; // Import collection and addDoc
+import { collection, addDoc, Timestamp } from "firebase/firestore"; // Import collection and addDoc
 import { ref, uploadString, getDownloadURL } from "firebase/storage"; // For image storage
 import { db, storage } from "../firebase"; // Import db and storage
-
-import '../styles/EventCreationForm.css'
-
-
-
+import { getAuth } from "firebase/auth";
+import "../styles/EventCreationForm.css";
 
 function EventCreationForm() {
   const [formData, setFormData] = useState({
@@ -23,6 +20,7 @@ function EventCreationForm() {
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
+  const auth = getAuth();
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -72,6 +70,12 @@ function EventCreationForm() {
     setErrors({});
 
     try {
+      // Check if the user is logged in
+      const user = auth.currentUser;
+      if (!user || !user.uid) {
+        throw new Error("User is not logged in.");
+      }
+
       // Upload image to Firebase Storage (if provided)
       let eventImageUrl = "";
       if (formData.eventImage) {
@@ -80,14 +84,17 @@ function EventCreationForm() {
         eventImageUrl = await getDownloadURL(storageRef);
       }
 
-      // Save event data to Firestore
-      const eventCollection = collection(db, "events");
-      await addDoc(eventCollection, {
-        ...formData,
+      // Save event data under the logged-in user's collection
+      const userEventsCollection = collection(db, `users/${user.uid}/events`);
+      await addDoc(userEventsCollection, {
+        eventName: formData.eventName,
+        location: formData.location,
+        date: formData.date,
+        time: formData.time,
         ticketQuantity: parseInt(formData.ticketQuantity),
         ticketPrice: parseFloat(formData.ticketPrice),
-        eventImage: eventImageUrl, // Save the image URL
-        createdAt: new Date(), // Timestamp for the event creation
+        eventImage: eventImageUrl,
+        createdAt: Timestamp.now(), // Timestamp for the event creation
       });
 
       // Show success message
@@ -111,7 +118,10 @@ function EventCreationForm() {
       }, 2000);
     } catch (error) {
       console.error("Error creating event:", error);
-      setErrors({ general: "An error occurred while creating the event. Please try again." });
+      setErrors({
+        general:
+          "An error occurred while creating the event. Please ensure you are logged in and try again.",
+      });
     }
   };
 
@@ -215,5 +225,6 @@ function EventCreationForm() {
 }
 
 export default EventCreationForm;
+
 
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext"; // Assuming you have the `useAuth` hook
 import { FaBars, FaTimes, FaUser, FaSignInAlt } from "react-icons/fa";
 import Authentication from "./Authentication";
 
@@ -9,16 +9,16 @@ function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState(""); // "login" or "register"
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth(); // Added `loading` state from useAuth
 
-  // Handle menu toggle
-  const handleToggle = () => setMenuOpen(!menuOpen);
+  // Toggle hamburger menu
+  const handleMenuToggle = () => setMenuOpen(!menuOpen);
 
-  // Handle dropdown toggle
+  // Toggle dropdown menu
   const handleDropdownToggle = () => setDropdownOpen(!dropdownOpen);
 
-  // Close menu on link click
-  const closeMenu = () => {
+  // Close both menu and dropdown
+  const closeAllMenus = () => {
     setMenuOpen(false);
     setDropdownOpen(false);
   };
@@ -32,6 +32,10 @@ function Navbar() {
   // Close authentication modal
   const closeAuthModal = () => setAuthModalOpen(false);
 
+  if (loading) {
+    return <div>Loading...</div>; // Loading state
+  }
+
   return (
     <nav className="sticky top-0 z-50 bg-gray-800 text-white shadow-md w-full">
       <div className="flex items-center justify-between px-4 py-3">
@@ -39,46 +43,42 @@ function Navbar() {
         <Link
           to="/"
           className="text-2xl font-bold hover:text-gray-300"
-          onClick={closeMenu}
+          onClick={closeAllMenus}
         >
           EventPlanner
         </Link>
 
         {/* Hamburger Menu Icon */}
-        <div className="text-2xl cursor-pointer lg:hidden" onClick={handleToggle}>
+        <div className="text-2xl cursor-pointer lg:hidden" onClick={handleMenuToggle}>
           {menuOpen ? <FaTimes /> : <FaBars />}
         </div>
 
         {/* Desktop Navigation Links */}
-        <ul className="hidden lg:flex lg:items-center lg:space-x-6">
+        <ul className={`hidden lg:flex lg:items-center lg:space-x-6`}>
           <li>
-            <Link to="/" className="hover:text-gray-300" onClick={closeMenu}>
+            <Link to="/" className="hover:text-gray-300" onClick={closeAllMenus}>
               Home
             </Link>
           </li>
           <li>
-            <Link to="/event" className="hover:text-gray-300" onClick={closeMenu}>
+            <Link to="/event" className="hover:text-gray-300" onClick={closeAllMenus}>
               Search Events
             </Link>
           </li>
-          <li className="relative group">
-            <Link
-              to="#"
-              onClick={(e) => {
-                e.preventDefault();
-                handleDropdownToggle();
-              }}
-              className="hover:text-gray-300 flex items-center"
+          <li className="relative">
+            <button
+              onClick={handleDropdownToggle}
+              className=" bg-gray-600 hover:text-gray-300 flex items-center focus:outline-none"
             >
               Manage
-            </Link>
+            </button>
             {dropdownOpen && (
               <ul className="absolute left-0 mt-2 bg-gray-700 text-white rounded shadow-lg py-2">
-                  <li>
+                <li>
                   <Link
                     to="/manage-events"
                     className="block px-4 py-2 hover:bg-gray-600"
-                    onClick={closeMenu}
+                    onClick={closeAllMenus}
                   >
                     Manage Events
                   </Link>
@@ -87,7 +87,7 @@ function Navbar() {
                   <Link
                     to="/create-event"
                     className="block px-4 py-2 hover:bg-gray-600"
-                    onClick={closeMenu}
+                    onClick={closeAllMenus}
                   >
                     Create Events
                   </Link>
@@ -96,7 +96,7 @@ function Navbar() {
                   <Link
                     to="/my-events"
                     className="block px-4 py-2 hover:bg-gray-600"
-                    onClick={closeMenu}
+                    onClick={closeAllMenus}
                   >
                     My Events
                   </Link>
@@ -105,12 +105,12 @@ function Navbar() {
             )}
           </li>
           <li>
-            <Link to="/favorites" className="hover:text-gray-300" onClick={closeMenu}>
+            <Link to="/favorites" className="hover:text-gray-300" onClick={closeAllMenus}>
               Favorites
             </Link>
           </li>
           <li>
-            <Link to="/calendar" className="hover:text-gray-300" onClick={closeMenu}>
+            <Link to="/calendar" className="hover:text-gray-300" onClick={closeAllMenus}>
               Calendar
             </Link>
           </li>
@@ -151,54 +151,64 @@ function Navbar() {
 
       {/* Mobile Navigation Links */}
       {menuOpen && (
-        <div className="lg:hidden flex flex-col bg-gray-700 py-4 space-y-2">
-          <ul className="flex flex-row flex-wrap justify-between text-sm">
+        <div className="lg:hidden bg-gray-700 py-4 space-y-4 text-sm">
+          <ul className="flex flex-wrap space-y-2">
             <li>
-              <Link to="/" className="hover:text-gray-300" onClick={closeMenu}>
+              <Link to="/" className="block px-4 py-2 hover:text-gray-300" onClick={closeAllMenus}>
                 Home
               </Link>
             </li>
             <li>
-              <Link to="/event" className="hover:text-gray-300" onClick={closeMenu}>
-                SearchEvents
+              <Link to="/event" className="block px-4 py-2 hover:text-gray-300" onClick={closeAllMenus}>
+                Search
               </Link>
             </li>
             <li>
-              <Link
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleDropdownToggle();
-                }}
-                className="hover:text-gray-300"
+              <button
+                onClick={handleDropdownToggle}
+                className="bg-gray-600 block px-4 py-2 hover:text-gray-300"
               >
                 Manage
-              </Link>
+              </button>
               {dropdownOpen && (
-                <div className="flex flex-row bg-gray-600 mt-2">
-                  <Link
-                    to="/create-event"
-                    className="block px-4 py-2 hover:bg-gray-500"
-                    onClick={closeMenu}
-                  >
-                    Create Events
-                  </Link>
-                  <Link
-                    to="/my-events"
-                    className="block px-4 py-2 hover:bg-gray-500"
-                    onClick={closeMenu}
-                  >
-                    My Events
-                  </Link>
-                </div>
+                <ul className=" flex flex-wrappl-4 space-y-2">
+                  <li>
+                    <Link
+                      to="/manage-events"
+                      className="block px-4 py-2 hover:bg-gray-600"
+                      onClick={closeAllMenus}
+                    >
+                      Manage Events
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/create-event"
+                      className="block px-4 py-2 hover:bg-gray-600"
+                      onClick={closeAllMenus}
+                    >
+                      Create Events
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/my-events"
+                      className="block px-4 py-2 hover:bg-gray-600"
+                      onClick={closeAllMenus}
+                    >
+                      My Events
+                    </Link>
+                  </li>
+                </ul>
               )}
             </li>
             <li>
-              <Link to="/favorites" className="hover:text-gray-300" onClick={closeMenu}>
+              <Link to="/favorites" className="block px-4 py-2 hover:text-gray-300" onClick={closeAllMenus}>
                 Favorites
               </Link>
             </li>
             <li>
-              <Link to="/calendar" className="hover:text-gray-300" onClick={closeMenu}>
+              <Link to="/calendar" className="block px-4 py-2 hover:text-gray-300" onClick={closeAllMenus}>
                 Calendar
               </Link>
             </li>
@@ -206,7 +216,7 @@ function Navbar() {
 
           {/* Login and Register buttons in mobile */}
           {!user && (
-            <div className="mt-4 flex flex-row space-x-4">
+            <div className="flex space-x-4 px-4">
               <button
                 onClick={() => openAuthModal("login")}
                 className="flex items-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
@@ -227,13 +237,12 @@ function Navbar() {
       )}
 
       {/* Authentication Modal */}
-      {authModalOpen && (
-        <Authentication mode={authMode} onClose={closeAuthModal} />
-      )}
+      {authModalOpen && <Authentication mode={authMode} onClose={closeAuthModal} />}
     </nav>
   );
 }
 
 export default Navbar;
+
 
 

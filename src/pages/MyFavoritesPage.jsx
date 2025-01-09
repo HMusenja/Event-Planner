@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { useSearchContext } from "../context/SearchContext";
+import { useAuth } from "../context/AuthContext"; // Import Auth context
 import { useNavigate } from "react-router-dom";
+import { getFirestore, doc, setDoc, deleteDoc } from "firebase/firestore";
 
 function MyFavoritesPage() {
   const { favorites, removeFavorite, handleSearch, searchTerm } = useSearchContext();
+  const { user } = useAuth(); // Get the current user
+  const db = getFirestore(); // Initialize Firestore
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [eventToRemove, setEventToRemove] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,11 +23,32 @@ function MyFavoritesPage() {
     setShowConfirmation(true);
   };
 
-  const handleRemove = () => {
+  const handleRemove = async () => {
     if (eventToRemove) {
-      removeFavorite(eventToRemove.id);
-      setShowConfirmation(false);
-      setEventToRemove(null);
+      try {
+        // Remove from Firestore
+        const favoriteRef = doc(db, `users/${user.uid}/favorites`, eventToRemove.id);
+        await deleteDoc(favoriteRef);
+
+        // Remove locally
+        removeFavorite(eventToRemove.id);
+        setShowConfirmation(false);
+        setEventToRemove(null);
+      } catch (error) {
+        console.error("Error removing favorite from Firestore:", error);
+      }
+    }
+  };
+
+  const handleAddToFavorites = async (event) => {
+    try {
+      // Save to Firestore
+      const favoriteRef = doc(db, `users/${user.uid}/favorites`, event.id);
+      await setDoc(favoriteRef, event);
+
+      console.log("Event added to favorites in Firestore!");
+    } catch (error) {
+      console.error("Error saving favorite to Firestore:", error);
     }
   };
 
@@ -169,3 +194,4 @@ function MyFavoritesPage() {
 }
 
 export default MyFavoritesPage;
+

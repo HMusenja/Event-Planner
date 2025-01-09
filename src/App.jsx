@@ -14,13 +14,14 @@ import CalendarPage from "./pages/CalendarPage";
 import AttendeesPage from "./pages/AttendeesPage";
 import ViewDetails from "./components/ViewDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import Authentication from "./components/Authentication"; // Import the Authentication modal
+import { useAuth } from "./context/AuthContext"; // Import Auth Context
+import NotAuthorizedPage from "./components/NotAuthorizedPage"
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import "./App.css";
 
-// Modal Component for Restricted Access
 const RestrictedModal = ({ onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div className="bg-white p-6 rounded-lg shadow-lg w-80">
@@ -31,15 +32,6 @@ const RestrictedModal = ({ onClose }) => (
       <div className="flex justify-end">
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2"
-          onClick={() => {
-            onClose();
-            // Optionally, navigate to login/registration page
-          }}
-        >
-          Login/Register
-        </button>
-        <button
-          className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
           onClick={onClose}
         >
           Close
@@ -50,24 +42,16 @@ const RestrictedModal = ({ onClose }) => (
 );
 
 function App() {
-  const [user, setUser] = useState(null);
+  const { user, login, register, logout } = useAuth(); // Use login, register, and logout from AuthContext
   const [favoriteEvents, setFavoriteEvents] = useState([]);
   const [showRestrictedModal, setShowRestrictedModal] = useState(false);
-  const navigate = useNavigate(); // useNavigate hook for navigation
+  const [showAuthModal, setShowAuthModal] = useState(false); // Show authentication modal
+  const navigate = useNavigate();
 
   const isRegistered = !!user;
 
-  const handleLogin = (userData) => {
-    setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
-    toast.success("Logged in successfully!");
-    navigate("/event"); // Navigate to the EventPage after login
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
-    toast.success("Logged out successfully!");
+  const handleAuthModalClose = () => {
+    setShowAuthModal(false);
   };
 
   const handleAddEvent = (event) => {
@@ -81,35 +65,39 @@ function App() {
   };
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
     const savedFavorites = localStorage.getItem("favorites");
-
-    if (savedUser) setUser(JSON.parse(savedUser));
     if (savedFavorites) setFavoriteEvents(JSON.parse(savedFavorites));
   }, []);
 
   useEffect(() => {
     localStorage.setItem("favorites", JSON.stringify(favoriteEvents));
+
   }, [favoriteEvents]);
+
+
 
   return (
     <SearchProvider>
       <div className="App">
-        <Navbar user={user} onLogin={handleLogin} onLogout={handleLogout} />
+        <Navbar
+          user={user}
+          onLogin={() => setShowAuthModal(true)}
+          onLogout={logout}
+        />
         <ToastContainer />
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/event" element={<EventPage />} />
           <Route path="/event/:eventId" element={<EventDetailsPage />} />
-
+          <Route path="/not-authorized" element={<NotAuthorizedPage />} />
           {/* Protected Routes */}
           <Route
             path="/create-event"
             element={
               <ProtectedRoute
                 isAllowed={isRegistered}
-                onRestrictedAccess={() => setShowRestrictedModal(true)}
+                onRestrictedAccess={() => setShowAuthModal(true)}
               >
                 <EventCreationForm />
               </ProtectedRoute>
@@ -120,18 +108,18 @@ function App() {
             element={
               <ProtectedRoute
                 isAllowed={isRegistered}
-                onRestrictedAccess={() => setShowRestrictedModal(true)}
+                onRestrictedAccess={() => setShowAuthModal(true)}
               >
                 <ManageEvents />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/events/view-details"
+            path="/events/view-details/:eventId"
             element={
               <ProtectedRoute
                 isAllowed={isRegistered}
-                onRestrictedAccess={() => setShowRestrictedModal(true)}
+                onRestrictedAccess={() => setShowAuthModal(true)}
               >
                 <ViewDetails />
               </ProtectedRoute>
@@ -142,7 +130,7 @@ function App() {
             element={
               <ProtectedRoute
                 isAllowed={isRegistered}
-                onRestrictedAccess={() => setShowRestrictedModal(true)}
+                onRestrictedAccess={() => setShowAuthModal(true)}
               >
                 <EditEventPage />
               </ProtectedRoute>
@@ -153,7 +141,7 @@ function App() {
             element={
               <ProtectedRoute
                 isAllowed={isRegistered}
-                onRestrictedAccess={() => setShowRestrictedModal(true)}
+                onRestrictedAccess={() => setShowAuthModal(true)}
               >
                 <MyEventsPage
                   favoriteEvents={favoriteEvents}
@@ -167,7 +155,7 @@ function App() {
             element={
               <ProtectedRoute
                 isAllowed={isRegistered}
-                onRestrictedAccess={() => setShowRestrictedModal(true)}
+                onRestrictedAccess={() => setShowAuthModal(true)}
               >
                 <MyFavoritesPage />
               </ProtectedRoute>
@@ -178,7 +166,7 @@ function App() {
             element={
               <ProtectedRoute
                 isAllowed={isRegistered}
-                onRestrictedAccess={() => setShowRestrictedModal(true)}
+                onRestrictedAccess={() => setShowAuthModal(true)}
               >
                 <CalendarPage />
               </ProtectedRoute>
@@ -189,16 +177,22 @@ function App() {
             element={
               <ProtectedRoute
                 isAllowed={isRegistered}
-                onRestrictedAccess={() => setShowRestrictedModal(true)}
+                onRestrictedAccess={() => setShowAuthModal(true)}
               >
                 <AttendeesPage />
               </ProtectedRoute>
             }
           />
         </Routes>
+
         {/* Display Restricted Modal */}
         {showRestrictedModal && (
           <RestrictedModal onClose={() => setShowRestrictedModal(false)} />
+        )}
+
+        {/* Display Authentication Modal */}
+        {showAuthModal && (
+          <Authentication onClose={handleAuthModalClose} />
         )}
       </div>
     </SearchProvider>
