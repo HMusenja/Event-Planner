@@ -37,20 +37,14 @@ function HomePage() {
         </p>
 
         {/* Buttons for Login and Continue as Guest */}
-        <div className="flex justify-center space-x-4">
-          <button
-            onClick={handleLoginClick}
-            className="px-8 py-3 text-lg md:text-xl font-semibold text-white bg-blue-500 rounded-full hover:bg-blue-600 transition-transform transform hover:scale-105 shadow-lg"
-          >
-            Login
-          </button>
+       
           <button
             onClick={handleGuestClick}
             className="px-8 py-3 text-lg md:text-xl font-semibold text-gray-800 bg-gray-300 rounded-full hover:bg-gray-400 transition-transform transform hover:scale-105 shadow-lg"
           >
             Continue as Guest
           </button>
-        </div>
+      
       </div>
 
       {/* Decorative Elements */}

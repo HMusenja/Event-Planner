@@ -15,9 +15,8 @@ function SearchEventForm() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    
-    // Clear error when user starts typing
-    if (error) setError("");
+
+    if (error) setError(""); // Clear error when typing
   };
 
   const fetchEvents = async () => {
@@ -66,78 +65,96 @@ function SearchEventForm() {
   };
 
   return (
-    <div className="container mx-auto mt-10">
-      <h2 className="text-xl font-bold mb-4">Find an Event!</h2>
+    <div className="container mx-auto mt-10 px-4">
+      <h2 className="text-2xl font-bold text-center mb-6 text-gray-100">
+        Find an Event!
+      </h2>
 
-      {/* Form layout in a row */}
-      <form onSubmit={handleSubmit} className="flex space-x-4 mb-6">
-        <div className="flex-1">
-          <label className="block text-gray-300">Category</label>
+      {/* Form Layout */}
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-4 md:flex-row md:gap-6 items-center justify-center"
+      >
+        <div className="flex-1 w-full">
+          <label className="block text-gray-300 mb-1">Category</label>
           <input
             type="text"
             name="category"
             value={formData.category}
             onChange={handleInputChange}
-            className="w-full p-2 border text-gray-800 rounded"
+            className="w-full p-3 border border-gray-500 rounded bg-gray-800 text-white focus:ring-2 focus:ring-accent"
             placeholder="e.g., Music, Sports"
           />
         </div>
-        <div className="flex-1">
-          <label className="block text-gray-300">Town</label>
+        <div className="flex-1 w-full">
+          <label className="block text-gray-300 mb-1">Town</label>
           <input
             type="text"
             name="town"
             value={formData.town}
             onChange={handleInputChange}
-            className="w-full p-2 border text-gray-800 rounded"
+            className="w-full p-3 border border-gray-500 rounded bg-gray-800 text-white focus:ring-2 focus:ring-accent"
             placeholder="e.g., New York, Los Angeles"
           />
         </div>
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 self-center"
+          className="bg-blue-600 text-white rounded hover:bg-blue-700 transition"
         >
           Search
         </button>
       </form>
 
-      {/* Display loading/error messages */}
-      {loading && <p className="mt-4 text-blue-600">Loading events...</p>}
-      {error && <p className="mt-4 text-red-600">{error}</p>}
+      {/* Loading/Error Messages */}
+      {loading && <p className="mt-4 text-blue-600 text-center">Loading events...</p>}
+      {error && <p className="mt-4 text-red-600 text-center">{error}</p>}
 
-      {/* Display the total number of events found */}
+      {/* Results */}
       {searchResults.length > 0 && !loading && (
-        <p className="text-lg font-medium mb-4">
-          {searchResults.length} event{searchResults.length !== 1 ? 's' : ''} found
+        <p className="text-lg font-medium mb-4 mt-4 text-center text-gray-200">
+          {searchResults.length} event{searchResults.length !== 1 ? "s" : ""} found
         </p>
       )}
 
-      {/* No results found message */}
       {searchResults.length === 0 && !loading && !error && (
-        <p className="mt-4 text-gray-600">No events found. Please try a different search.</p>
+        <p className="mt-4 text-gray-400 text-center">
+          No events found. Please try a different search.
+        </p>
       )}
 
-      {/* Display search results */}
+      {/* Display Search Results */}
       <div className="mt-6">
-        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {searchResults.slice(0, visibleCount).map((event, index) => {
-            const eventImage = event.images?.[0]?.url || "placeholder.jpg"; // Use the first image or a fallback
+            const eventImage = event.images?.[0]?.url || "placeholder.jpg";
             const uniqueKey = `${event.id}-${index}`;
             return (
-              <li key={uniqueKey} className="border p-4 rounded bg-gray-800">
-                <h4 className="font-bold">{event.name}</h4>
+              <li
+                key={uniqueKey}
+                className="border border-gray-700 p-4 rounded-lg bg-gray-800 text-white shadow-lg transition-transform hover:scale-105"
+              >
+                <h4 className="font-bold text-lg mb-2">{event.name}</h4>
                 <img
                   src={eventImage}
                   alt={event.name}
-                  className="w-full h-64 object-cover rounded mt-2"
+                  className="w-full h-48 object-cover rounded mb-4"
                 />
-                <p>Date: {event.dates.start.localDate}</p>
-                <p>Venue: {event._embedded?.venues[0]?.name || "Unknown"}</p>
-                <p>City: {event._embedded?.venues[0]?.city?.name || "Unknown"}</p>
+                <p>
+                  <span className="font-semibold">Date:</span>{" "}
+                  {event.dates.start.localDate}
+                </p>
+                <p>
+                  <span className="font-semibold">Venue:</span>{" "}
+                  {event._embedded?.venues[0]?.name || "Unknown"}
+                </p>
+                <p>
+                  <span className="font-semibold">City:</span>{" "}
+                  {event._embedded?.venues[0]?.city?.name || "Unknown"}
+                </p>
                 <Link
                   to={`/event/${event.id}`}
                   state={{ event }}
-                  className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 mt-2 inline-block"
+                  className="block mt-4 px-4 py-2 bg-blue-600 text-center text-white rounded hover:bg-blue-700"
                 >
                   View Details
                 </Link>
@@ -146,14 +163,16 @@ function SearchEventForm() {
           })}
         </ul>
 
-        {/* Button to load more results */}
+        {/* Load More Button */}
         {visibleCount < searchResults.length && (
-          <button
-            onClick={handleLoadMore}
-            className="mt-4 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
-          >
-            Load More
-          </button>
+          <div className="text-center mt-6">
+            <button
+              onClick={handleLoadMore}
+              className="px-6 py-3 bg-gray-600 text-white rounded hover:bg-gray-700"
+            >
+              Load More
+            </button>
+          </div>
         )}
       </div>
     </div>
@@ -161,3 +180,4 @@ function SearchEventForm() {
 }
 
 export default SearchEventForm;
+
